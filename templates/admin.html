@@ -1,0 +1,45 @@
+<!-- SPDX-FileCopyrightText: 2026 Bora Yarkın -->
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+
+<!DOCTYPE html>
+<html lang="en" class="theme-light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content Admin · {{ brand or 'CV + Blog' }}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/admin.css') }}" />
+</head>
+<body class="admin-page">
+  <div class="page">
+    <header class="nav">
+      <div class="nav-left" id="brand">{{ brand or 'Admin' }} · Admin</div>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle color theme" aria-pressed="false"></button>
+        <button class="nav-cv" type="button" id="save-db">Save to SQLite</button>
+        <button class="lang-toggle" type="button" id="download-json">Export JSON</button>
+      </div>
+    </header>
+
+    <main class="column" id="admin-app">
+      <section class="hero">
+        <div class="hero-links admin-actions">
+          <button class="nav-cv" type="button" id="reload-data">Reload data</button>
+          <label class="file-input nav-cv">
+            <input type="file" id="import-file" accept="application/json" />
+            <span>Import JSON</span>
+          </label>
+        </div>
+        <div id="status-line" class="muted" style="margin-top: 10px;"></div>
+      </section>
+
+      <div class="main-tabs" role="tablist" aria-label="Sections"></div>
+      <div class="lang-tabs" role="tablist" aria-label="Languages"></div>
+      <div id="panel"></div>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='scripts/admin.js') }}" defer></script>
+</body>
+</html>

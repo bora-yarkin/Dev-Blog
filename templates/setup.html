@@ -1,0 +1,107 @@
+<!-- SPDX-FileCopyrightText: 2026 Bora Yarkın -->
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+
+<!DOCTYPE html>
+<html lang="{{ default_lang or 'en' }}" class="theme-light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Setup · {{ brand or 'CV + Blog' }}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/admin.css') }}" />
+</head>
+<body class="admin-page">
+  <div class="page">
+    <header class="nav">
+      <div class="nav-left" id="brand">{{ brand or 'Setup' }} · Setup</div>
+      <div class="nav-actions">
+        {% if setup_cfg and setup_cfg.get("setup_done") %}
+          <a class="lang-toggle" href="/login">Admin</a>
+        {% endif %}
+        <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle color theme" aria-pressed="false"></button>
+      </div>
+    </header>
+
+    <main class="column" id="setup-root">
+      <section class="hero">
+        <h1 class="section-title">Welcome</h1>
+        <p class="muted" style="margin: 6px 0 18px;">Fill in your details, upload your CVs, and set admin credentials. You can revisit this later from the admin area.</p>
+        <div id="setup-status" class="muted" style="margin-top: 10px;"></div>
+      </section>
+
+      <form id="setup-form" class="column" enctype="multipart/form-data" style="gap: 16px;">
+        <div class="line-item">
+          <div class="admin-section-title">Site basics</div>
+          <div class="field-row">
+            <div class="field-label">Brand</div>
+            <div class="field-input"><input type="text" name="brand" value="{{ content.site.brand }}" required /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Contact email</div>
+            <div class="field-input"><input type="email" name="email" value="{{ content.site.email }}" required /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Site URL</div>
+            <div class="field-input"><input type="url" name="site_url" placeholder="https://yourdomain.com" value="{{ content.site.siteUrl or '' }}" /></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="admin-section-title">Uploads</div>
+          <div class="field-row">
+            <div class="field-label">Profile picture</div>
+            <div class="field-input"><input type="file" name="profile_picture" accept="image/*" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Favicon (upload)</div>
+            <div class="field-input"><input type="file" name="favicon" accept=".ico,.png,.svg" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Favicon text (quick SVG)</div>
+            <div class="field-input"><input type="text" name="favicon_text" placeholder="2-3 letters" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">CV (English)</div>
+            <div class="field-input"><input type="file" name="cv_en" accept="application/pdf" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">CV (Turkish)</div>
+            <div class="field-input"><input type="file" name="cv_tr" accept="application/pdf" /></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="admin-section-title">Admin & security</div>
+          <div class="field-row">
+            <div class="field-label">Admin username</div>
+            <div class="field-input"><input type="text" name="admin_username" value="{{ admin_username or '' }}" required /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Admin password</div>
+            <div class="field-input"><input type="password" name="admin_password" placeholder="Set a strong password" required /></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Flask secret key</div>
+            <div class="field-input"><input type="text" name="secret_key" placeholder="Leave blank to generate" /></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="submit" class="nav-cv" id="setup-submit">Save setup</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script id="setup-data" type="application/json">
+    {{ {
+      "content": content,
+      "setup": setup_cfg or {},
+      "adminUsername": admin_username or "",
+      "defaultLang": default_lang or 'en'
+    } | tojson }}
+  </script>
+  <script src="{{ url_for('static', filename='scripts/setup.js') }}" defer></script>
+</body>
+</html>

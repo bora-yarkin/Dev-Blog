@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 Bora Yarkın
+# SPDX-License-Identifier: GPL-3.0-only
+
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+instance/
+static/assets/
+*.DS_Store
+.vscode/

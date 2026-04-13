@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Bora Yarkın
+# SPDX-License-Identifier: GPL-3.0-only
+
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/bora-yarkin/dev-blog/security/policy
+    about: Please use the security policy instead of opening a public issue.
+  - name: Support and usage questions
+    url: https://github.com/bora-yarkin/dev-blog/blob/main/.github/SUPPORT.md
+    about: Check the support guide before opening a new request.

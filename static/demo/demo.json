@@ -1,0 +1,186 @@
+{
+  "SPDX-FileCopyrightText": "2026 Bora Yarkın",
+  "SPDX-License-Identifier": "GPL-3.0-only",
+  "blogPosts": [
+    {
+      "id": "hello-world",
+      "slug": "hello-world",
+      "published": true,
+      "tags": ["intro"],
+      "date": "2025-01-01",
+      "lang": {
+        "en": {
+          "title": "Hello, world",
+          "summary": "A starter post you can replace with your own story.",
+          "body": "<p>This starter ships with bilingual content, an admin panel, and a dynamic sitemap. Replace this post with your own and publish.</p>"
+        },
+        "tr": {
+          "title": "Merhaba dünya",
+          "summary": "Kendi hikayenle değiştirebileceğin örnek yazı.",
+          "body": "<p>Bu şablon iki dil destekler, admin paneli ve dinamik sitemap ile gelir. Bu yazıyı kendi içeriğinle değiştir.</p>"
+        }
+      }
+    }
+  ],
+  "site": {
+    "brand": "Your Name",
+    "cvPath": "cv-en.pdf",
+    "cvPathTr": "cv-tr.pdf",
+    "email": "you@example.com",
+    "profilePicture": "assets/profile_picture.jpeg",
+    "favicon": "assets/favicon.ico",
+    "siteUrl": ""
+  },
+  "translations": {
+    "en": {
+      "blogCopy": {
+        "backToList": "← Back to blog",
+        "draftLabel": "Draft",
+        "empty": "No posts yet.",
+        "publishedLabel": "Published",
+        "sub": "Notes on work and learning.",
+        "title": "Blog"
+      },
+      "contact": {
+        "line1": "Email is best for longer messages.",
+        "sub": "Say hi or share a project.",
+        "title": "Let's talk"
+      },
+      "contactLinks": [
+        {"icon": "linkedin", "label": "LinkedIn", "url": "https://www.linkedin.com"},
+        {"icon": "github", "label": "GitHub", "url": "https://github.com"}
+      ],
+      "experience": {
+        "items": [
+          {
+            "bullets": ["Kept a small Flask app running and deployed."],
+            "company": "Sample Co",
+            "date": "2024 · Remote",
+            "desc": "Replace this with your real experience.",
+            "role": "Developer"
+          }
+        ],
+        "sub": "Recent work.",
+        "title": "Experience"
+      },
+      "hero": {
+        "bodies": ["Use this bilingual CV + blog starter to publish your work."],
+        "kicker": "Your Name · Software developer",
+        "line": "Building reliable products."
+      },
+      "heroLinks": [
+        {"download": true, "icon": "download", "id": "cv", "label": "Download CV (PDF)", "url": "cv-en.pdf"},
+        {"download": false, "icon": "mail", "id": "email", "label": "Mail", "url": "mailto:you@example.com"}
+      ],
+      "nav": {
+        "cvLabel": "Download CV",
+        "items": [
+          {"href": "#home", "label": "home"},
+          {"href": "#work", "label": "projects"},
+          {"href": "#experience", "label": "experience"},
+          {"href": "#skills", "label": "skills"},
+          {"href": "#contact", "label": "contact"},
+          {"href": "/blog", "label": "blog"}
+        ]
+      },
+      "skills": {
+        "education": {"meta": "University · 2021-2025", "title": "BSc in Software"},
+        "groups": [
+          {"label": "Stack", "text": "Python, Flask, SQLite"}
+        ],
+        "sub": "What you work with.",
+        "title": "Education & skills"
+      },
+      "work": {
+        "items": [
+          {
+            "brief": "A bilingual CV + blog starter with admin UI.",
+            "detail": "Dynamic sitemap, robots, manifest, and JSON content model. Replace this with your own project.",
+            "link": "#",
+            "meta": "Open source · 2025",
+            "tags": ["Flask", "i18n"],
+            "title": "CV + Blog Starter"
+          }
+        ],
+        "sub": "Projects.",
+        "title": "My work",
+        "workLinkLabel": "See project"
+      }
+    },
+    "tr": {
+      "blogCopy": {
+        "backToList": "← Bloga dön",
+        "draftLabel": "Taslak",
+        "empty": "Henüz yazı yok.",
+        "publishedLabel": "Yayında",
+        "sub": "Çalışma ve öğrenme notları.",
+        "title": "Blog"
+      },
+      "contact": {
+        "line1": "Uzun mesajlar için e-posta.",
+        "sub": "Selam ver veya bir proje paylaş.",
+        "title": "Konuşalım"
+      },
+      "contactLinks": [
+        {"icon": "linkedin", "label": "LinkedIn", "url": "https://www.linkedin.com"},
+        {"icon": "github", "label": "GitHub", "url": "https://github.com"}
+      ],
+      "experience": {
+        "items": [
+          {
+            "bullets": ["Küçük bir Flask uygulamasını çalıştırdım ve dağıttım."],
+            "company": "Örnek Şirket",
+            "date": "2024 · Uzaktan",
+            "desc": "Bunu gerçek deneyiminle değiştir.",
+            "role": "Geliştirici"
+          }
+        ],
+        "sub": "Son işler.",
+        "title": "Deneyim"
+      },
+      "hero": {
+        "bodies": ["İşlerini paylaşmak için iki dilli CV + blog şablonu."],
+        "kicker": "Your Name · Yazılım geliştirici",
+        "line": "Güvenilir ürünler geliştiriyorum."
+      },
+      "heroLinks": [
+        {"download": true, "icon": "download", "id": "cv", "label": "CV'yi indir (PDF)", "url": "cv-tr.pdf"},
+        {"download": false, "icon": "mail", "id": "email", "label": "Mail", "url": "mailto:you@example.com"}
+      ],
+      "nav": {
+        "cvLabel": "CV'yi indir",
+        "items": [
+          {"href": "#home", "label": "anasayfa"},
+          {"href": "#work", "label": "projeler"},
+          {"href": "#experience", "label": "deneyim"},
+          {"href": "#skills", "label": "yetenekler"},
+          {"href": "#contact", "label": "iletişim"},
+          {"href": "/blog", "label": "blog"}
+        ]
+      },
+      "skills": {
+        "education": {"meta": "Üniversite · 2021-2025", "title": "Yazılım Lisansı"},
+        "groups": [
+          {"label": "Yığın", "text": "Python, Flask, SQLite"}
+        ],
+        "sub": "Kullandıkların.",
+        "title": "Eğitim ve yetenekler"
+      },
+      "work": {
+        "items": [
+          {
+            "brief": "Admin arayüzlü iki dilli CV + blog şablonu.",
+            "detail": "Dinamik sitemap, robots, manifest ve JSON içerik modeli. Bunu kendi projenle değiştir.",
+            "link": "#",
+            "meta": "Açık kaynak · 2025",
+            "tags": ["Flask", "i18n"],
+            "title": "CV + Blog Başlangıç"
+          }
+        ],
+        "sub": "Projeler.",
+        "title": "Çalışmalarım",
+        "workLinkLabel": "Projeyi gör"
+      }
+    }
+  }
+}
