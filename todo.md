@@ -9,7 +9,13 @@
 - Keep the frontend vanilla HTML, CSS, and JS.
 - Use Python for orchestration, install, upgrade, and runtime tasks.
 - Consider the project unfinished until every requested feature is implemented, tested, and production-ready.
+- Treat documentation as essential work, not optional polish.
 - Stop coding and ask questions whenever implementation details are materially unclear or a reasonable assumption could cause expensive rework.
+- When making large UI changes, use headless Chrome yourself to inspect the result and catch breakage instead of relying on the user to describe what broke.
+- When a feature is fully implemented, move it from the planned sections into `Implemented`.
+- When a feature is only partially implemented, move the completed portion into `Implemented` and keep the remaining work in the planned sections.
+- If a feature requires both backend and frontend work, completing only one side means the feature is not fully implemented yet.
+- Do not mark a cross-layer feature fully implemented until all required layers, tests, and integration behavior are complete.
 
 ## Implementation Order
 
@@ -426,6 +432,25 @@
 - Remove old Flask templates, scripts, and styles.
 - Remove old API routes, old payload assumptions, and old compatibility shims.
 - Update README and operational docs for the new system.
+- Write and maintain documentation for:
+  - architecture
+  - tenant layout
+  - installer/configurator usage
+  - upgrade flow
+  - backup/restore flow
+  - revision history and rollback
+  - theme/appearance workflow
+  - media handling
+  - testing workflow
+  - release workflow
+  - GitHub Actions and security workflow
+- Treat tests as essential infrastructure, not optional polish.
+- Ensure every feature has test coverage appropriate to its layer and risk.
+- Add and maintain:
+  - unit tests
+  - integration tests
+  - smoke tests
+  - UI/flow validation where appropriate
 - Add testing for:
   - tenant setup
   - upgrade flow
@@ -437,7 +462,28 @@
   - preview
   - media variants
   - SEO outputs
+- Make sure feature changes include tests so future changes do not silently break them.
+- Use headless browser checks for major admin/frontend UI changes when useful.
 - Treat the rewrite as incomplete until all requested features are implemented and verified.
+
+## 18. GitHub Automation
+- Add GitHub Actions modeled broadly after the `OpsAtlas` repository approach.
+- Create workflows for:
+  - primary CI
+  - GitHub-native security checks
+  - release publishing
+- Keep the workflows written in the repository but disabled initially.
+- Make CI run on commits once enabled.
+- Make CI cover at least:
+  - Python dependency/install verification
+  - linting
+  - tests
+  - smoke checks where applicable
+  - artifact upload for logs/results when useful
+- Add CodeQL and related security scanning similar in spirit to `OpsAtlas`.
+- Add release automation for GitHub releases once the project is finished.
+- Make release automation produce the packaged distribution artifact for installer-based deployment.
+- Keep GitHub automation aligned with the release/install/upgrade model of this project.
 
 ## Keep Track
 - When the schema changes, update:
@@ -521,12 +567,52 @@
   - retention logic
   - upgrade flow
   - restore confirmations
+- When CI/release behavior changes, update:
+  - tests
+  - packaging
+  - installer assumptions
+  - upgrade flow
+  - release artifact generation
+  - GitHub workflows
 - When revision history changes, update:
   - admin restore UI
   - snapshot structure
   - rollback logic
   - backup compatibility
   - auditability
+
+## Optional After Completion
+- Add hierarchical navigation with parent pages.
+- Add reusable block per-page override mode in addition to true linked mode.
+- Add explicit draft/version publishing for content beyond unsaved preview.
+- Add richer author profiles with bio, avatar, and author archive pages.
+- Add advanced caching once the core system is stable.
+- Add optional PostgreSQL runtime support.
+- Add remote/cloud backup destinations in addition to local storage.
+- Add fully enabled GitHub workflow automation after the project reaches release-ready state.
+- Add image focal point and art-direction controls.
+- Add scheduled publishing and scheduled unpublishing.
+- Add search for pages, blog posts, and admin content.
+- Add form builder or custom lead/contact form blocks.
+- Add redirect manager for changed slugs.
+- Add analytics integrations.
+- Add comment system integration for blog posts.
+- Add sitemap/editor controls for per-page indexing, canonical fine-tuning, and robots directives.
+- Add page templates/themes marketplace-style import/export if the project ever grows beyond personal use.
+- Add visual diffing between revisions.
+- Add collaborative editing or multiple admin roles if the single-admin model ever changes.
+- Add richer embed providers and provider-specific controls.
+- Add in-house editor replacement if the vendored editor becomes limiting.
+- Add structured design token editor with more advanced theme inheritance.
+- Add block usage insights, such as where reusable blocks are referenced.
+- Add bulk media operations and duplicate detection.
+- Add multilingual slug control per locale if needed later.
+- Add local development helpers such as seeded demo tenants for testing.
+- Consider adding features discussed but deferred for later:
+  - broader nav metadata beyond flat nav
+  - explicit page hierarchy
+  - more advanced caching layer
+  - additional database backends beyond SQLite as primary
 
 ## Implemented
 - Nothing yet.
