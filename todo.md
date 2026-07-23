@@ -1,0 +1,532 @@
+# CMS Rebuild Todo
+
+## Scope Rules
+- Treat this as a full rewrite, not an incremental refactor.
+- Do not preserve backward compatibility with the old Flask app, old APIs, old routes, old admin behavior, old frontend contracts, or JSON-era assumptions.
+- Remove JSON content storage, JSON import/export, demo JSON seeding, and frontend JSON fallback loading.
+- Keep SQLite as the primary database.
+- Keep the data layer PostgreSQL-compatible for a future optional database backend.
+- Keep the frontend vanilla HTML, CSS, and JS.
+- Use Python for orchestration, install, upgrade, and runtime tasks.
+- Consider the project unfinished until every requested feature is implemented, tested, and production-ready.
+- Stop coding and ask questions whenever implementation details are materially unclear or a reasonable assumption could cause expensive rework.
+
+## Implementation Order
+
+## 1. Rewrite Foundation
+- Define the new repository/app layout around:
+  - `project/` for application code
+  - tenant-specific runtime data folders outside `project/`
+- Split the app into two separately runnable FastAPI services:
+  - `frontend-admin` for public rendering, admin shell rendering, and proxying browser requests
+  - `backend` for API, persistence, auth, media, SEO, preview, backup, and system operations
+- Keep the backend API-only.
+- Proxy browser-side admin/API traffic through `frontend-admin`.
+- Define shared modules for config, models, validation, rendering contracts, and utilities.
+- Reserve and document new public routes:
+  - `/<page-slug>` for CMS pages
+  - `/blog/*` for blog
+  - `/blog/category/<slug>` for category archives
+- Reserve and document admin access under `/admin`.
+- Define reserved slug rules so CMS pages cannot collide with system/blog routes.
+
+## 2. Multi-Tenant Runtime And Installer
+- Support multiple tenant installations from one shared codebase.
+- Use a parent folder layout like:
+  - `dev-blog/project`
+  - `dev-blog/<tenant-name>`
+- Keep each tenant self-contained for:
+  - `.env`
+  - database
+  - media
+  - backups
+  - logs
+  - generated assets
+  - service/runtime metadata
+- Keep the configurator/installer in place after installation so new tenants can be added later.
+- Build a terminal installer/configurator script that:
+  - asks for tenant name
+  - asks for ports
+  - asks for all required environment/config variables
+  - generates the tenant `.env`
+  - initializes folders
+  - initializes the database
+  - starts the site
+  - prints the chosen IP and port information
+- Add support for detecting an existing installation and offering:
+  - upgrade existing installation
+  - create separate tenant installation using the same shared app code
+- Implement upgrade flow using an `upgrade/` folder:
+  - user drops the new version there
+  - configurator detects it
+  - configurator replaces old `project/` and itself with the new code
+  - tenant data is preserved except where migrations require controlled changes
+  - services are restarted after upgrade
+- Add Linux `systemd` service installation support.
+- Decide and implement tenant service naming conventions.
+- Ensure multiple tenants can run on different ports from the same codebase.
+
+## 3. Dev Packaging And Project Hygiene
+- Add a `make` target that:
+  - removes local dev runtime data if present
+  - produces a clean project archive
+- Ensure the clean archive excludes tenant data, local runtime files, old build artifacts, and development leftovers.
+- Update docs for:
+  - local dev startup
+  - packaging
+  - fresh install
+  - tenant add
+  - upgrade flow
+  - systemd install
+
+## 4. Core Data Model
+- Design a database-first schema for:
+  - tenants/site settings
+  - languages
+  - default language
+  - pages
+  - navigation items
+  - sections
+  - blocks
+  - reusable blocks
+  - repeatable nested block items
+  - blog settings
+  - blog posts
+  - blog categories
+  - blog tags
+  - blog post/category relationships
+  - translations
+  - media assets
+  - generated image variants
+  - custom fonts
+  - appearance settings
+  - theme presets
+  - staged appearance state
+  - SEO settings
+  - admin/auth settings
+  - revision history
+  - backup settings/metadata
+- Make languages admin-configurable.
+- Add an admin-selected default language.
+- Implement field-level fallback to the default language.
+- Support multiple public pages.
+- Give pages their own slugs and SEO settings.
+- Keep navigation flat in v1.
+- Add future support items to the backlog for:
+  - `show in nav`
+  - `nav label`
+  - `nav order`
+  - `parent page`
+- Make pages, sections, and blocks reorderable.
+- Implement a block-based page builder rather than a fixed section-only site model.
+- Support repeatable nested items where relevant.
+- Support reusable blocks.
+- Make reusable blocks true linked content so editing one updates every page that uses it.
+- Support per-section visibility toggles.
+- Support per-page and per-section custom CSS.
+- Support global custom CSS.
+- Support multiple appearance/theme presets.
+- Support staged appearance drafts separate from published appearance.
+- Keep blog content in the database even when the blog is disabled.
+- Add blog categories in addition to tags.
+- Add post-level SEO fields:
+  - SEO title
+  - meta description
+  - canonical URL override
+  - social/share image
+- Add page-level SEO fields.
+- Store author defaults and per-post author override values.
+
+## 5. Legacy Salvage And Data Replacement
+- Treat legacy migration as optional one-time salvage only if it stays low effort.
+- Never let legacy schema or payload compatibility constrain the new architecture.
+- Remove the old JSON import/export flow completely.
+- Replace old setup/admin assumptions tied to the old schema.
+- Remove obsolete compatibility layers once the new system is live.
+
+## 6. Backend API And Domain Layer
+- Build the dedicated backend API service.
+- Add API support for:
+  - login
+  - password auth pre-check
+  - 2FA verify
+  - logout
+  - setup/bootstrap
+  - tenant/site settings
+  - language CRUD
+  - page CRUD
+  - navigation CRUD
+  - section CRUD
+  - block CRUD
+  - reusable block CRUD
+  - blog CRUD
+  - category CRUD
+  - tag CRUD
+  - blog settings
+  - appearance settings
+  - theme preset management
+  - appearance staging and publish
+  - SEO settings
+  - media upload/list/delete/update metadata
+  - font upload/list/delete
+  - preview data
+  - SQL backup export/import
+  - automatic backup configuration
+  - manual backup trigger
+  - revision history
+  - restore/rollback actions
+- Support public content delivery for `frontend-admin`.
+- Keep API contracts stable for future caching integration.
+- Add validation, sanitization, and permission checks at the backend layer.
+
+## 7. Authentication And Security
+- Keep a single admin user per tenant.
+- Make the login username customizable.
+- Keep login username separate from public author display name.
+- Add a global public author display name.
+- Allow per-post author name override with the global value as default.
+- Add optional TOTP 2FA.
+- Implement the 2FA step as a popup/modal after password entry.
+- Add one-time recovery codes for TOTP 2FA.
+- Add setup/admin controls to enable or disable 2FA.
+- Ensure auth/session handling works through the `frontend-admin` proxy architecture.
+- Sanitize stored editor HTML.
+- Allow trusted admin-entered HTML after sanitization.
+- Protect upload, preview, backup, upgrade, and rollback flows.
+
+## 8. Media Pipeline
+- Build a media library with local filesystem storage and DB metadata.
+- Support uploads for:
+  - content images
+  - share images
+  - branding assets
+  - editor-inserted assets
+  - embeds metadata where needed
+  - custom fonts
+- Rename blog-related uploads using post slug and date.
+- Decide and implement naming rules for non-blog assets.
+- Support common web and desktop font formats.
+- Store asset metadata including:
+  - alt text
+  - caption
+  - credit/source
+- Generate image variants/thumbnails on upload in v1.
+- Store generated variant metadata.
+- Add media picker support inside admin/editor.
+
+## 9. WYSIWYG Editor
+- Replace the old editor with a real WYSIWYG workflow.
+- Prefer a vendored editor integration that is reasonably swappable later.
+- Store sanitized HTML in the database.
+- Support:
+  - paragraphs
+  - headings
+  - bold
+  - italic
+  - underline
+  - text alignment
+  - line height
+  - paragraph spacing
+  - lists
+  - links
+  - quotes
+  - code blocks
+  - tables
+  - images
+  - embeds/iframes
+  - buttons/callouts
+  - text colors
+  - color picker
+- Support both named/theme colors and arbitrary picker colors.
+- Add labeled/favorite color groups.
+- Map styling to controlled classes/tokens where possible.
+- Ensure semantic behavior:
+  - bold stays bold
+  - accent color only appears when explicitly chosen
+- Integrate media library insertion.
+- Support custom HTML blocks.
+
+## 10. Admin CMS
+- Rebuild the admin as a mini CMS.
+- Organize the admin around:
+  - Content
+  - Structure
+  - Appearance
+  - SEO
+  - Settings
+- Add page management UI for:
+  - create page
+  - edit slug
+  - edit SEO
+  - edit flat nav settings
+- Add block-based page builder UI for:
+  - sections
+  - blocks
+  - reusable blocks
+  - repeatable nested items
+  - visibility controls
+  - ordering
+- Use a starter block palette including:
+  - hero
+  - rich text
+  - media
+  - gallery
+  - cards
+  - timeline
+  - skills/list
+  - stats
+  - CTA
+  - contact
+  - blog feed
+  - spacer
+  - custom HTML
+- Support both drag-and-drop and move up/down reordering.
+- Add configurable language management UI.
+- Add blog management UI for:
+  - post list
+  - category management
+  - tag management
+  - publish status
+  - blog enable/disable
+  - public category archive behavior
+  - featured-image display configuration for listing cards
+  - per-post author override
+- Add appearance controls for:
+  - logo/brand
+  - colors
+  - named/favorite colors
+  - fonts
+  - spacing
+  - button styles
+  - global custom CSS
+  - per-page/per-section custom CSS under advanced
+  - theme presets
+  - appearance staging/draft management
+- Add split-pane preview inside admin.
+- Add desktop/tablet/mobile preview modes.
+- Add preview refresh delay of about 3 seconds for typing-heavy edits.
+- Support unsaved live preview inside the admin session.
+- Keep admin reachable through `domain.com/admin`.
+- Add SQL backup export/import controls.
+- Add automatic backup scheduling/location controls.
+- Add setup/import flows that work before the main admin is available.
+
+## 11. Frontend Rendering
+- Rebuild the public site to use the new CMS content model.
+- Keep the site primarily a single-page portfolio experience plus blog, while also supporting multiple public pages.
+- Render pages by slug.
+- Render blog under `/blog/*`.
+- Render category archives under `/blog/category/<slug>`.
+- Render admin under `/admin`.
+- Implement configurable language switching.
+- Implement field-level fallback.
+- Render all editor output correctly.
+- Remove the old bold-means-accent behavior.
+- Support appearance configuration for:
+  - colors
+  - fonts
+  - spacing
+  - button styles
+  - theme presets
+  - staged/published appearance state
+  - custom CSS
+- Keep frontend dependencies minimal.
+
+## 12. Blog, SEO, And Public Metadata
+- Support blog categories and tags publicly.
+- Add public category archive pages.
+- Render post SEO fields, share images, and author display names correctly.
+- Make blog featured-image usage in listing cards configurable.
+- Add a full blog disable mode that:
+  - hides blog navigation
+  - hides blog homepage/section entry points
+  - returns `404` for `/blog` and post/category pages
+  - removes blog URLs from sitemap
+  - removes blog structured data
+  - removes blog SEO surface area
+- Ensure unpublished posts remain private.
+- Support embeds where allowed in post content.
+- Keep SEO as a first-class concern across:
+  - pages
+  - blog posts
+  - category archives
+  - media metadata
+
+## 13. Appearance Presets, Staging, And Publish Flow
+- Support multiple saved theme presets.
+- Let presets include all appearance-related settings, including custom CSS.
+- Add separate appearance publish action.
+- Keep appearance draft/staging separate from published appearance.
+- Make preview able to show staged but unpublished appearance.
+
+## 14. Revision History And Rollback
+- Implement revision history/version rollback in the first release.
+- Cover at least:
+  - pages
+  - blog posts
+  - appearance settings
+  - reusable blocks
+  - key site settings where practical
+- Add restore flow that preserves auditability.
+- Create revisions on:
+  - every explicit save
+  - every publish
+  - every restore
+- Do not create revisions on every keystroke.
+- Add admin UI for browsing revisions.
+- Add restore/rollback safeguards and confirmations.
+- Make restore actions create a new revision that records the rollback event.
+
+## 15. Backups And Restore
+- Add plaintext SQL backup export.
+- Add plaintext SQL backup import.
+- Make SQL import a full-replace restore flow.
+- Add initial setup support for importing a SQL backup.
+- During import, replace old stored domain/site URL values with the new configured domain where appropriate.
+- Add configurable automatic backups.
+- Keep automatic backups off by default.
+- Zip database, media, and related runtime assets together.
+- Allow local backup destination selection.
+- Add retention policy using:
+  - last N daily backups
+  - last N weekly backups
+  - last N monthly backups
+- Ensure backup/restore works per tenant.
+
+## 16. Setup, Install, Upgrade, And Ops
+- Rebuild the setup flow for the new architecture.
+- Add first-run configuration for:
+  - tenant name
+  - frontend port
+  - backend port
+  - default language
+  - supported languages
+  - domain/site URL
+  - admin username
+  - public author display name
+  - admin password
+  - optional 2FA
+  - import from SQL backup
+  - backup location
+  - any other required environment values
+- Generate `.env` before first start.
+- Add startup checks for:
+  - missing venv
+  - missing database
+  - missing runtime directories
+  - missing generated assets
+- Add service-mode installation for Linux.
+- Add tenant-aware restart/reload flows.
+- Use one shared venv at the parent installation level.
+- Run one `frontend-admin` service and one `backend` service per tenant.
+- Bind tenant backends to `127.0.0.1` only.
+- Document single-command local startup and production installation.
+
+## 17. Cleanup, Testing, And Readiness
+- Remove old Flask templates, scripts, and styles.
+- Remove old API routes, old payload assumptions, and old compatibility shims.
+- Update README and operational docs for the new system.
+- Add testing for:
+  - tenant setup
+  - upgrade flow
+  - backup/restore
+  - revision restore
+  - 2FA
+  - page rendering
+  - blog rendering
+  - preview
+  - media variants
+  - SEO outputs
+- Treat the rewrite as incomplete until all requested features are implemented and verified.
+
+## Keep Track
+- When the schema changes, update:
+  - backend models
+  - migrations
+  - admin forms
+  - preview payloads
+  - frontend renderers
+  - revision snapshots
+  - backup/restore logic
+- When a new block type is added or changed, update:
+  - DB schema if needed
+  - backend validation
+  - admin builder UI
+  - preview renderer
+  - public renderer
+  - revision serialization
+  - SEO impact review
+- When editor capabilities change, update:
+  - sanitizer rules
+  - preview rendering
+  - frontend rendering
+  - media handling
+  - revision history coverage
+- When language behavior changes, update:
+  - fallback logic
+  - admin language UI
+  - page rendering
+  - blog rendering
+  - SEO alternates/hreflang behavior
+- When appearance settings change, update:
+  - theme presets
+  - staged appearance state
+  - preview
+  - published frontend
+  - custom CSS scoping
+  - revision history
+- When SEO fields change, update:
+  - page metadata
+  - blog metadata
+  - category archives
+  - sitemap
+  - structured data
+  - backup/import/export rules
+- When auth/session behavior changes, update:
+  - frontend-admin proxy logic
+  - backend auth endpoints
+  - 2FA flow
+  - recovery codes
+  - installer/setup prompts
+  - systemd/runtime configuration if needed
+- When media handling changes, update:
+  - upload rules
+  - variant generation
+  - metadata forms
+  - editor insertion
+  - frontend rendering
+  - backup packaging
+- When multi-tenant/runtime behavior changes, update:
+  - installer
+  - upgrader
+  - `.env` generation
+  - systemd services
+  - logs
+  - backup paths
+  - docs
+- When reusable blocks change, update:
+  - linked-content propagation behavior
+  - revision snapshots
+  - page preview rendering
+  - frontend rendering
+- When sanitization rules change, update:
+  - custom HTML behavior
+  - embed allowlists
+  - editor UI expectations
+  - frontend rendering assumptions
+- When backup/restore behavior changes, update:
+  - installer/setup
+  - admin controls
+  - automatic backup scheduler
+  - retention logic
+  - upgrade flow
+  - restore confirmations
+- When revision history changes, update:
+  - admin restore UI
+  - snapshot structure
+  - rollback logic
+  - backup compatibility
+  - auditability
+
+## Implemented
+- Nothing yet.
